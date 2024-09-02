@@ -1,0 +1,9 @@
+body {
+    background: white;
+}
+
+.floor {
+    border-bottom: 1px solid black;
+    height: 150px;
+    display: flex;
+}
