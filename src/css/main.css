@@ -8,6 +8,7 @@ body {
 
 #lifts-area {
     position: relative;
+    top: 100px;
 }
 
 .floor {
@@ -23,12 +24,14 @@ body {
     position: absolute;
     bottom: 0;
     left: 100px;
+    overflow: hidden;
 }
 
 .lift .lift-door {
     width: 50%;
     background: darkgray;
     height: 100%;
-    float: right;
+    float: left;
     border: 1px solid black;
+    transition: all 2.5s ease;
 }

@@ -34,7 +34,7 @@ function createLifts(liftCount) {
 
     for (let count = liftCount - 1; count >= 0; count--) {
         const liftHTML = `
-            <div class="lift" style="left: ${(liftCount - count) * 120}px">
+            <div data-lift-id="${liftCount - count}" class="lift" style="left: ${(liftCount - count) * 120}px">
                 <div class="lift-door"></div>
                 <div class="lift-door"></div>
             </div>
@@ -46,4 +46,17 @@ function createLifts(liftCount) {
     console.log(frag)
 
     return frag;
+}
+
+function openLiftDoors(id) {
+    const liftDoor = document.querySelectorAll(`[data-lift-id="${id}"] .lift-door`);
+    liftDoor[0].style.transform = "translateX(-95%)";
+    liftDoor[1].style.transform = "translateX(95%)";
+    setTimeout(() => closeLiftDoors(id), 3000); // Doors open at 2500ms and stay open for 500ms
+}
+
+function closeLiftDoors(id) {
+    const liftDoor = document.querySelectorAll(`[data-lift-id="${id}"] .lift-door`);
+    liftDoor[0].style.transform = "translateX(0)";
+    liftDoor[1].style.transform = "translateX(0)";
 }
