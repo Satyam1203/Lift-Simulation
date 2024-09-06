@@ -25,6 +25,7 @@ body {
     bottom: 0;
     left: 100px;
     overflow: hidden;
+    transition: all 2s linear;
 }
 
 .lift .lift-door {

@@ -1,3 +1,13 @@
+
+const requestedFloorQueue = [];
+const liftsStatus = {};
+const liftDirection = { UP: "UP", DOWN: "DOWN" }
+const defaultLiftProps = {
+    direction: liftDirection.UP,
+    currentFloor: 0,
+    isAvailable: true
+}
+
 function generateLiftAndFloors() {
     const liftCount = document.getElementById("lift-count").valueAsNumber || 2;
     const floorCount = document.getElementById("floor-count").valueAsNumber || 4;
@@ -16,8 +26,8 @@ function createFloor(floorCount) {
         const floorHTML = `
             <div class="floor">
                 <div class="controls">
-                    ${count < floorCount - 1 ? "<button>UP</button>" : ""}
-                    ${count > 0 ? "<button>DOWN</button>" : ""}
+                    ${count < floorCount - 1 ? `<button onClick="requestLift(${count}, 'UP')">UP</button>` : ""}
+                    ${count > 0 ? `<button onClick="requestLift(${count}, 'DOWN')">DOWN</button>` : ""}
                 </div>
                 <div class="lift-area"></div>
             </div>
@@ -41,6 +51,7 @@ function createLifts(liftCount) {
         `;
 
         frag.innerHTML += liftHTML;
+        liftsStatus[count] = defaultLiftProps;
     }
 
     console.log(frag)
@@ -59,4 +70,29 @@ function closeLiftDoors(id) {
     const liftDoor = document.querySelectorAll(`[data-lift-id="${id}"] .lift-door`);
     liftDoor[0].style.transform = "translateX(0)";
     liftDoor[1].style.transform = "translateX(0)";
+
+    liftsStatus[id].isAvailable = true;
+}
+
+function requestLift(floor, forDirection) {
+    // alert("LIFT REQUESTED: ", floor, forDirection)
+    // requestedFloorQueue.value = requestedFloorQueue.value.push({floor, forDirection});
+    moveLift(1, floor);
+}
+
+function moveLift(id, floor) {
+    if (!liftsStatus[id].isAvailable) {
+        return;
+    }
+
+    liftsStatus[id].isAvailable = false;
+    liftsStatus[id].direction = floor > liftsStatus[id].currentFloor ? liftDirection.UP : liftDirection.DOWN;
+
+    const lift = document.querySelector(`[data-lift-id="${id}"]`);
+    const duration = 2000 * Math.abs(floor - liftsStatus[id].currentFloor);
+    lift.style.transitionDuration = `${duration}ms`;
+    lift.style.bottom = `${floor * 150}px`;
+
+    liftsStatus[id].currentFloor = floor;
+    setTimeout(() => openLiftDoors(id), duration);
 }
