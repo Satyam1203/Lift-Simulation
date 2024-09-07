@@ -26,9 +26,10 @@ function createFloor(floorCount) {
         const floorHTML = `
             <div class="floor">
                 <div class="controls">
-                    ${count < floorCount - 1 ? `<button onClick="requestLift(${count}, 'UP')">UP</button>` : ""}
-                    ${count > 0 ? `<button onClick="requestLift(${count}, 'DOWN')">DOWN</button>` : ""}
+                    ${count < floorCount - 1 ? `<button id=${count+"-UP"} onClick="requestLift(${count}, 'UP')">UP &#8673;</button>` : ""}
+                    ${count > 0 ? `<button id=${count+"-DOWN"} onClick="requestLift(${count}, 'DOWN')">DOWN &#8675;</button>` : ""}
                 </div>
+                <div class="floor-identifier">Floor: ${count}</div>
                 <div class="lift-area"></div>
             </div>
         `;
@@ -59,40 +60,49 @@ function createLifts(liftCount) {
     return frag;
 }
 
-function openLiftDoors(id) {
+function openLiftDoors(id, cb) {
     const liftDoor = document.querySelectorAll(`[data-lift-id="${id}"] .lift-door`);
     liftDoor[0].style.transform = "translateX(-95%)";
     liftDoor[1].style.transform = "translateX(95%)";
-    setTimeout(() => closeLiftDoors(id), 3000); // Doors open at 2500ms and stay open for 500ms
+    setTimeout(() => closeLiftDoors(id, cb), 3000); // Doors open at 2500ms and stay open for 500ms
 }
 
-function closeLiftDoors(id) {
+function closeLiftDoors(id, cb) {
     const liftDoor = document.querySelectorAll(`[data-lift-id="${id}"] .lift-door`);
     liftDoor[0].style.transform = "translateX(0)";
     liftDoor[1].style.transform = "translateX(0)";
 
-    liftsStatus[id].isAvailable = true;
+    setTimeout(cb, 2500);
 }
 
 function requestLift(floor, forDirection) {
     // alert("LIFT REQUESTED: ", floor, forDirection)
     // requestedFloorQueue.value = requestedFloorQueue.value.push({floor, forDirection});
-    moveLift(1, floor);
+    moveLift(1, floor, forDirection);
 }
 
-function moveLift(id, floor) {
+function moveLift(id, floor, forDirection) {
     if (!liftsStatus[id].isAvailable) {
         return;
     }
 
     liftsStatus[id].isAvailable = false;
-    liftsStatus[id].direction = floor > liftsStatus[id].currentFloor ? liftDirection.UP : liftDirection.DOWN;
+    liftsStatus[id].direction = forDirection;
 
     const lift = document.querySelector(`[data-lift-id="${id}"]`);
+    const clickedBtn = document.getElementById(`${floor}-${forDirection}`);
     const duration = 2000 * Math.abs(floor - liftsStatus[id].currentFloor);
+
     lift.style.transitionDuration = `${duration}ms`;
     lift.style.bottom = `${floor * 150}px`;
 
     liftsStatus[id].currentFloor = floor;
-    setTimeout(() => openLiftDoors(id), duration);
+    clickedBtn.classList.toggle("button-disabled");
+
+    const cb = () => {
+        clickedBtn.classList.toggle("button-disabled");
+        liftsStatus[id].isAvailable = true;        
+    }
+
+    setTimeout(() => openLiftDoors(id, cb), duration);
 }
