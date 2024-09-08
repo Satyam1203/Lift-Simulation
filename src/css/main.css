@@ -8,7 +8,7 @@ body {
 
 #lifts-area {
     position: relative;
-    top: 100px;
+    top: 50px;
     background-color: #edf2f6;
 }
 
@@ -72,4 +72,23 @@ body {
     float: left;
     border: 1px solid black;
     transition: all 2.5s ease;
+}
+
+#pending-lift-requests {
+    margin-top: 10px;
+    height: 24px;
+    display: flex;
+}
+
+#pending-lift-requests .queue-item {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #c2b5df;
+    color: #FFF;
+    margin-left: 8px;
+    font-weight: bold;
 }

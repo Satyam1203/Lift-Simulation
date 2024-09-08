@@ -81,7 +81,7 @@ function closeLiftDoors(id, cb) {
 function requestLift(floor, forDirection) {
     // If any lift is present at current floor already, don't do anything
     const allLiftsPositions = Object.values(liftsStatus);
-    if (allLiftsPositions.some(({currentFloor, isAvailable}) => currentFloor == floor )) {
+    if (allLiftsPositions.some(({currentFloor}) => currentFloor == floor )) {
         return;
     }
 
@@ -107,7 +107,10 @@ function requestLift(floor, forDirection) {
                 isAddedinQueue = true;
             }
         });
-        !isAddedinQueue && requestedFloorQueue.add({ floor, forDirection });
+        if (!isAddedinQueue) {
+            requestedFloorQueue.add({ floor, forDirection });
+            updatePendingLiftRequests();
+        }
     }
 }
 
@@ -136,9 +139,21 @@ function moveLift(id, floor, forDirection) {
         if (requestedFloorQueue.size > 0) {
             const [first] = requestedFloorQueue;
             requestedFloorQueue.delete(first);
+            updatePendingLiftRequests();
             moveLift(id, first.floor, first.forDirection);
         }
     }
 
     setTimeout(() => openLiftDoors(id, cb), duration);
+}
+
+function updatePendingLiftRequests() {
+    let queueHtml = `<div>`;
+    queueHtml += `Pending lift requests:`;
+    requestedFloorQueue.forEach(item => {
+        queueHtml += `<span class="queue-item">${item.floor}</span>`;
+    })
+    queueHtml += `</div>`;
+
+    document.getElementById("pending-lift-requests").innerHTML = queueHtml;
 }
