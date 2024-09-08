@@ -1,5 +1,8 @@
 
-const requestedFloorQueue = [];
+let liftCount = 2; // Default values
+let floorCount = 4; // Default values
+const requestedFloorQueue = new Set(); // stores id of lifts for which requests cannot be catered at the moment bcoz lifts are already serving other floors
+const runningRequests = new Set(); // requests for lifts which are currently being catered
 const liftsStatus = {};
 const liftDirection = { UP: "UP", DOWN: "DOWN" }
 const defaultLiftProps = {
@@ -9,8 +12,8 @@ const defaultLiftProps = {
 }
 
 function generateLiftAndFloors() {
-    const liftCount = document.getElementById("lift-count").valueAsNumber || 2;
-    const floorCount = document.getElementById("floor-count").valueAsNumber || 4;
+    liftCount = document.getElementById("lift-count").valueAsNumber || 2;
+    floorCount = document.getElementById("floor-count").valueAsNumber || 4;
     const liftsAndFloorWrapper = document.getElementById("lifts-area");
     console.log(liftCount, floorCount);
 
@@ -45,14 +48,14 @@ function createLifts(liftCount) {
 
     for (let count = liftCount - 1; count >= 0; count--) {
         const liftHTML = `
-            <div data-lift-id="${liftCount - count}" class="lift" style="left: ${(liftCount - count) * 120}px">
+            <div data-lift-id="${liftCount - count - 1}" class="lift" style="left: ${(liftCount - count) * 120}px">
                 <div class="lift-door"></div>
                 <div class="lift-door"></div>
             </div>
         `;
 
         frag.innerHTML += liftHTML;
-        liftsStatus[count] = defaultLiftProps;
+        liftsStatus[count] = {...defaultLiftProps};
     }
 
     console.log(frag)
@@ -76,9 +79,36 @@ function closeLiftDoors(id, cb) {
 }
 
 function requestLift(floor, forDirection) {
-    // alert("LIFT REQUESTED: ", floor, forDirection)
-    // requestedFloorQueue.value = requestedFloorQueue.value.push({floor, forDirection});
-    moveLift(1, floor, forDirection);
+    // If any lift is present at current floor already, don't do anything
+    const allLiftsPositions = Object.values(liftsStatus);
+    if (allLiftsPositions.some(({currentFloor, isAvailable}) => currentFloor == floor )) {
+        return;
+    }
+
+    let closestAvailableLiftDist = Infinity;
+    let closestAvailableLiftId = -1;
+    for (i = 0; i < liftCount; i++) {
+        if (liftsStatus[i].isAvailable) {
+            let distance = Math.abs(floor - liftsStatus[i].currentFloor);
+            if (distance < closestAvailableLiftDist) {
+                closestAvailableLiftDist = distance;
+                closestAvailableLiftId = i;
+            }
+        }
+    }
+
+    if (closestAvailableLiftId > -1) {
+        moveLift(closestAvailableLiftId, floor, forDirection);
+        runningRequests.add(floor);
+    } else {
+        let isAddedinQueue = false;
+        requestedFloorQueue.forEach(item => {
+            if (item.floor === floor) {
+                isAddedinQueue = true;
+            }
+        });
+        !isAddedinQueue && requestedFloorQueue.add({ floor, forDirection });
+    }
 }
 
 function moveLift(id, floor, forDirection) {
@@ -101,7 +131,13 @@ function moveLift(id, floor, forDirection) {
 
     const cb = () => {
         clickedBtn.classList.toggle("button-disabled");
-        liftsStatus[id].isAvailable = true;        
+        liftsStatus[id].isAvailable = true;
+        runningRequests.delete(id);
+        if (requestedFloorQueue.size > 0) {
+            const [first] = requestedFloorQueue;
+            requestedFloorQueue.delete(first);
+            moveLift(id, first.floor, first.forDirection);
+        }
     }
 
     setTimeout(() => openLiftDoors(id, cb), duration);
