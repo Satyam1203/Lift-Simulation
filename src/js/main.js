@@ -85,10 +85,10 @@ function closeLiftDoors(id, cb) {
 
 function requestLift(floor, forDirection) {
     // If any lift is present at current floor already, don't do anything
-    const allLiftsPositions = Object.values(liftsStatus);
-    if (allLiftsPositions.some(({currentFloor}) => currentFloor == floor )) {
-        return;
-    }
+    // const allLiftsPositions = Object.values(liftsStatus);
+    // if (allLiftsPositions.some(({currentFloor}) => currentFloor == floor )) {
+    //     return;
+    // }
 
     let closestAvailableLiftDist = Infinity;
     let closestAvailableLiftId = -1;
