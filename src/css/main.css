@@ -1,14 +1,22 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
+    margin: 8px;
     background: white;
+    font-family: math, sans-serif;
+}
+
+#inputs {
+    margin-top: 10px;
 }
 
 #lifts-area {
     position: relative;
-    top: 50px;
+    top: 20px;
     background-color: #edf2f6;
 }
 
@@ -34,7 +42,7 @@ body {
 
 .floor .controls button {
     cursor: pointer;
-    padding: 8px 16px;
+    padding: 8px 10px;
     text-transform: uppercase;
     border-radius: 4px;
     outline: none;
@@ -42,7 +50,7 @@ body {
     margin: 10px;
     background-image: linear-gradient(45deg, #a18cd1 0%, #fbc2eb 100%);
     color: #222;
-    width: 90px;
+    width: 75px;
 }
 
 .floor .controls button:active, .floor .controls button:disabled, .floor .controls .button-disabled {

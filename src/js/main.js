@@ -12,8 +12,13 @@ const defaultLiftProps = {
 }
 
 function generateLiftAndFloors() {
-    liftCount = document.getElementById("lift-count").valueAsNumber || 2;
-    floorCount = document.getElementById("floor-count").valueAsNumber || 4;
+    liftCount = document.getElementById("lift-count").valueAsNumber;
+    floorCount = document.getElementById("floor-count").valueAsNumber;
+
+    if (!liftCount || !floorCount) {
+        return;
+    }
+
     const liftsAndFloorWrapper = document.getElementById("lifts-area");
     console.log(liftCount, floorCount);
 
@@ -48,7 +53,7 @@ function createLifts(liftCount) {
 
     for (let count = liftCount - 1; count >= 0; count--) {
         const liftHTML = `
-            <div data-lift-id="${liftCount - count - 1}" class="lift" style="left: ${(liftCount - count) * 120}px">
+            <div data-lift-id="${liftCount - count - 1}" class="lift" style="left: ${(liftCount - count) * 105}px">
                 <div class="lift-door"></div>
                 <div class="lift-door"></div>
             </div>
