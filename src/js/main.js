@@ -1,6 +1,7 @@
 
 let liftCount = 2; // Default values
 let floorCount = 4; // Default values
+let customLiftSpeed = null;
 const requestedFloorQueue = new Set(); // stores id of lifts for which requests cannot be catered at the moment bcoz lifts are already serving other floors
 const runningRequests = new Set(); // requests for lifts which are currently being catered
 const liftsStatus = {};
@@ -139,9 +140,10 @@ function moveLift(id, floor, forDirection) {
     const lift = document.querySelector(`[data-lift-id="${id}"]`);
     const floorBtnUp = document.getElementById(`${floor}-${liftDirection.UP}`);
     const floorBtnDown = document.getElementById(`${floor}-${liftDirection.DOWN}`);
-    const duration = 2000 * Math.abs(floor - liftsStatus[id].currentFloor);
+    const defaultDuration = 2000 * Math.abs(floor - liftsStatus[id].currentFloor);
+    const liftsTransitionDuration = customLiftSpeed ? Math.min(defaultDuration, customLiftSpeed) : defaultDuration;
 
-    lift.style.transitionDuration = `${duration}ms`;
+    lift.style.transitionDuration = `${liftsTransitionDuration}ms`;
     lift.style.bottom = `${floor * 150}px`;
 
     liftsStatus[id].currentFloor = floor;
@@ -160,7 +162,7 @@ function moveLift(id, floor, forDirection) {
         }
     }
 
-    setTimeout(() => openLiftDoors(id, cb), duration);
+    setTimeout(() => openLiftDoors(id, cb), liftsTransitionDuration);
 }
 
 function updatePendingLiftRequests() {
@@ -172,4 +174,8 @@ function updatePendingLiftRequests() {
     queueHtml += `</div>`;
 
     document.getElementById("pending-lift-requests").innerHTML = queueHtml;
+}
+
+function liftsSpeedChange(goFast) {
+    customLiftSpeed = goFast ? 5000 : null;
 }

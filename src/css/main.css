@@ -10,6 +10,38 @@ body {
     font-family: math, sans-serif;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.extra-features {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.extra-features .info-icon {
+    font-size: 20px;
+}
+
+.extra-features .tooltip-content {
+    display: none;
+    position: absolute;
+    top: 42px;
+    right: 10px;
+    width: 170px;
+    padding: 2px 8px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background-color: #FFF;
+    z-index: 1;
+}
+
+.extra-features .info-icon:hover ~ .tooltip-content {
+    display: block;
+}
+
 #inputs {
     margin-top: 10px;
 }

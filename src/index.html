@@ -7,7 +7,20 @@
     <title>LIFT SIMULATOR</title>
 </head>
 <body>
-    <h2>LIFT SIMULATOR</h2>
+    <header>
+        <h2>LIFT SIMULATOR</h2>
+        <div class="extra-features">
+            <input type="checkbox" id="lifts-speed-toggle" onchange="liftsSpeedChange(this.checked)" />
+            <label for="lifts-speed-toggle">Move lifts fast</label>
+            <span class="info-icon">&#9432;</span>
+            <p class="tooltip-content">
+                Move lift faster? <br /> 
+                Click on the checkbox for faster acceleration. <br /> <br /> 
+                PS: Lifts go faster on next request.
+            </p>
+        </div>
+        
+    </header>
     <form id="inputs" onsubmit="return false">
         <input placeholder="Enter lift count" type="number" id="lift-count" min="1" required />
         <input placeholder="Enter floors count" type="number" id="floor-count" min="1" required />
