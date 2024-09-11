@@ -90,6 +90,9 @@ function requestLift(floor, forDirection) {
     //     return;
     // }
 
+    const clickedBtn = document.getElementById(`${floor}-${forDirection}`);
+    clickedBtn.classList.toggle("button-disabled");
+
     let closestAvailableLiftDist = Infinity;
     let closestAvailableLiftId = -1;
     for (i = 0; i < liftCount; i++) {
@@ -119,6 +122,12 @@ function requestLift(floor, forDirection) {
     }
 }
 
+function removeClassIfPresent(element) {
+    if (element && element.classList.contains("button-disabled")) {
+        element.classList.remove("button-disabled");
+    }
+}
+
 function moveLift(id, floor, forDirection) {
     if (!liftsStatus[id].isAvailable) {
         return;
@@ -128,17 +137,19 @@ function moveLift(id, floor, forDirection) {
     liftsStatus[id].direction = forDirection;
 
     const lift = document.querySelector(`[data-lift-id="${id}"]`);
-    const clickedBtn = document.getElementById(`${floor}-${forDirection}`);
+    const floorBtnUp = document.getElementById(`${floor}-${liftDirection.UP}`);
+    const floorBtnDown = document.getElementById(`${floor}-${liftDirection.DOWN}`);
     const duration = 2000 * Math.abs(floor - liftsStatus[id].currentFloor);
 
     lift.style.transitionDuration = `${duration}ms`;
     lift.style.bottom = `${floor * 150}px`;
 
     liftsStatus[id].currentFloor = floor;
-    clickedBtn.classList.toggle("button-disabled");
 
     const cb = () => {
-        clickedBtn.classList.toggle("button-disabled");
+        removeClassIfPresent(floorBtnUp);
+        removeClassIfPresent(floorBtnDown);
+
         liftsStatus[id].isAvailable = true;
         runningRequests.delete(id);
         if (requestedFloorQueue.size > 0) {
