@@ -90,8 +90,11 @@ function requestLift(floor, forDirection) {
     // if (allLiftsPositions.some(({currentFloor}) => currentFloor == floor )) {
     //     return;
     // }
-
     const clickedBtn = document.getElementById(`${floor}-${forDirection}`);
+    if (clickedBtn.classList.contains("button-disabled")) {
+        return;
+    }
+
     clickedBtn.classList.toggle("button-disabled");
 
     let closestAvailableLiftDist = Infinity;
